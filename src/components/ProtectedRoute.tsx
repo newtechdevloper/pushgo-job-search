@@ -22,6 +22,11 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
             }
 
             // Authenticated but wrong role - redirect to their dashboard
+            // Allow admin to access everything
+            if (userRole === "admin") {
+                return;
+            }
+
             if (userRole && userRole !== requiredRole) {
                 const dashboardMap: Record<UserRole, string> = {
                     employee: "/dashboard/employee",

