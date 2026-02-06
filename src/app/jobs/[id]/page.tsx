@@ -4,12 +4,11 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import styles from "@/styles/jobs.module.css"; // Reuse jobs styles or create new
+import styles from "@/styles/jobs.module.css";
 import { MapPin, DollarSign, Clock, Building, ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
-import { doc, getDoc, addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { MOCK_JOBS } from "@/data/jobs";
 
 export default function JobDetailsPage() {
     const params = useParams();
@@ -29,30 +28,21 @@ export default function JobDetailsPage() {
 
     useEffect(() => {
         const fetchJob = async () => {
-            try {
-                const docRef = doc(db, "jobs", jobId);
-                const docSnap = await getDoc(docRef);
+            // Find job from MOCK_JOBS
+            const foundJob = MOCK_JOBS.find(j => j.id.toString() === jobId);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    // Format Salary
-                    let salaryDisplay = "Competitive";
-                    if (data.salary) {
-                        if (data.salary.min && data.salary.max) {
-                            salaryDisplay = `$${(data.salary.min / 1000).toFixed(0)}k - $${(data.salary.max / 1000).toFixed(0)}k`;
-                        } else if (data.salary.min) {
-                            salaryDisplay = `$${(data.salary.min / 1000).toFixed(0)}k+`;
-                        }
-                    }
-                    setJob({ id: docSnap.id, ...data, salaryDisplay });
-                } else {
-                    console.log("No such job!");
-                }
-            } catch (error) {
-                console.error("Error fetching job:", error);
-            } finally {
-                setLoading(false);
+            if (foundJob) {
+                // Determine salary display (since mock data is string, use it directly)
+                setJob({
+                    ...foundJob,
+                    salaryDisplay: foundJob.salary,
+                    postedAt: new Date(), // Mock date
+                    requirements: ["Experience with React", "Knowledge of TypeScript", "Team player", "Good communication skills"] // Mock requirements
+                });
+            } else {
+                setJob(null);
             }
+            setLoading(false);
         };
 
         if (jobId) {
@@ -64,32 +54,12 @@ export default function JobDetailsPage() {
         e.preventDefault();
         setApplying(true);
 
-        if (!user) {
-            router.push(`/login?redirect=/jobs/${jobId}`);
-            return;
-        }
-
-        try {
-            await addDoc(collection(db, "applications"), {
-                jobId: jobId,
-                jobTitle: job.title,
-                applicantId: user.uid,
-                applicantName: user.displayName || user.email,
-                applicantEmail: user.email,
-                resume: resumeLink,
-                coverLetter: coverLetter,
-                status: "applied",
-                appliedAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
+        // Mock Apply Process
+        setTimeout(() => {
             setApplicationStatus("success");
             setShowApplyForm(false);
-        } catch (error) {
-            console.error("Error applying:", error);
-            setApplicationStatus("error");
-        } finally {
             setApplying(false);
-        }
+        }, 1500);
     };
 
     if (loading) {
@@ -250,7 +220,7 @@ export default function JobDetailsPage() {
                                 <Clock size={20} className={styles.icon} />
                                 <div>
                                     <label>Posted Date</label>
-                                    <p>{job.createdAt ? new Date(job.createdAt.toDate()).toLocaleDateString() : "Recently"}</p>
+                                    <p>{job.posted}</p>
                                 </div>
                             </div>
                         </div>

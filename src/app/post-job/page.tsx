@@ -5,15 +5,12 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import styles from "@/styles/post-job.module.css";
-import { Check, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { db } from "@/lib/firebase";
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
-import { createJob } from "@/lib/firestore-schema";
 
 export default function PostJobPage() {
     const router = useRouter();
-    const { user, loading: authLoading } = useAuth();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -36,76 +33,19 @@ export default function PostJobPage() {
         setLoading(true);
         setError("");
 
-        if (!user) {
-            setError("You must be logged in to post a job.");
-            setLoading(false);
-            router.push("/login?redirect=/post-job");
-            return;
-        }
-
         if (!title || !location || !description || !companyName || !companyEmail) {
             setError("Please fill in all required fields.");
             setLoading(false);
             return;
         }
 
-        try {
-            // 1. Find or Create Company
-            let companyId = "";
-            const companiesRef = collection(db, "companies");
-            const q = query(companiesRef, where("name", "==", companyName));
-            const querySnapshot = await getDocs(q);
-
-            if (!querySnapshot.empty) {
-                // Use existing company
-                companyId = querySnapshot.docs[0].id;
-            } else {
-                // Create new company
-                const newCompanyRef = await addDoc(companiesRef, {
-                    name: companyName,
-                    website: companyWebsite,
-                    email: companyEmail,
-                    hrUsers: [user.uid],
-                    verified: false,
-                    activeJobs: 1,
-                    totalApplications: 0,
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp()
-                });
-                companyId = newCompanyRef.id;
-            }
-
-            // 2. Create Job
-            const jobData: any = {
-                title,
-                type: type.toLowerCase().replace(" ", "-"),
-                location,
-                salary: {
-                    min: parseInt(salaryMin) || 0,
-                    max: parseInt(salaryMax) || 0,
-                    currency: "USD"
-                },
-                category,
-                description,
-                requirements: [], // Simplify for now
-                company: companyName,
-                companyId: companyId,
-                postedBy: user.uid,
-                status: "active",
-                applicants: 0
-            };
-
-            await createJob(jobData);
-
-            // 3. Redirect
-            router.push("/jobs");
-
-        } catch (err: any) {
-            console.error("Error posting job:", err);
-            setError("Failed to post job: " + err.message);
-        } finally {
+        // Simulate Network Delay and Success
+        setTimeout(() => {
             setLoading(false);
-        }
+            // In a real app we'd save data here. For now, just redirect.
+            alert("Job Posted Successfully! (Mock)");
+            router.push("/jobs");
+        }, 1500);
     };
 
     return (

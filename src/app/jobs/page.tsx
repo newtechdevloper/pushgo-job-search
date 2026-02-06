@@ -5,11 +5,9 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { JOB_TYPES, SALARY_RANGES } from "@/data/jobs";
+import { MOCK_JOBS, JOB_TYPES, SALARY_RANGES } from "@/data/jobs";
 import { Briefcase, MapPin, DollarSign, Clock } from "lucide-react";
 import styles from "@/styles/jobs.module.css";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
 function JobsContent() {
     const searchParams = useSearchParams();
@@ -23,60 +21,16 @@ function JobsContent() {
     const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
     const [selectedSalary, setSelectedSalary] = useState("");
 
-    // Fetch Jobs
+    // Load Mock Jobs
     useEffect(() => {
-        const fetchJobs = async () => {
-            try {
-                const jobsRef = collection(db, "jobs");
-                // Fetch active jobs
-                const q = query(jobsRef, where("status", "==", "active"));
-                const snapshot = await getDocs(q);
+        // Simulate network delay
+        const timer = setTimeout(() => {
+            setJobs(MOCK_JOBS);
+            setFilteredJobs(MOCK_JOBS);
+            setLoading(false);
+        }, 800);
 
-                const jobsData = snapshot.docs.map(doc => {
-                    const data = doc.data();
-                    // Format Salary
-                    let salaryDisplay = "Competitive";
-                    if (data.salary) {
-                        if (data.salary.min && data.salary.max) {
-                            salaryDisplay = `$${(data.salary.min / 1000).toFixed(0)}k - $${(data.salary.max / 1000).toFixed(0)}k`;
-                        } else if (data.salary.min) {
-                            salaryDisplay = `$${(data.salary.min / 1000).toFixed(0)}k+`;
-                        }
-                    }
-
-                    // Format Date
-                    let postedTime = "Recently";
-                    if (data.createdAt) {
-                        try {
-                            // Handle Firestore Timestamp
-                            const date = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-                            const diffInDays = Math.floor((new Date().getTime() - date.getTime()) / (1000 * 3600 * 24));
-                            if (diffInDays === 0) postedTime = "Today";
-                            else if (diffInDays === 1) postedTime = "Yesterday";
-                            else postedTime = `${diffInDays}d ago`;
-                        } catch (e) {
-                            console.error("Date formatting error", e);
-                        }
-                    }
-
-                    return {
-                        id: doc.id,
-                        ...data,
-                        salaryDisplay,
-                        posted: postedTime
-                    };
-                });
-
-                setJobs(jobsData);
-                setFilteredJobs(jobsData);
-            } catch (error) {
-                console.error("Error fetching jobs:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchJobs();
+        return () => clearTimeout(timer);
     }, []);
 
     // Filter Logic (Client Side)
@@ -100,22 +54,27 @@ function JobsContent() {
 
         if (selectedTypes.length > 0) {
             results = results.filter(job =>
-                // DB stores "full-time", UI filter is "Full-time"
                 selectedTypes.some(t => t.toLowerCase() === job.type?.toLowerCase())
             );
         }
 
-        // Simplified Salary Filter
+        // Salary Filter (String based for Mock Data)
         if (selectedSalary) {
             results = results.filter(job => {
-                if (!job.salary) return false;
-                const min = job.salary.min || 0;
+                // Mock data salary format: "$150k - $200k" or "$80k"
+                // Extract numbers
+                const salaryStr = job.salary.toLowerCase();
+                const numbers = salaryStr.match(/\d+/g);
+                if (!numbers) return false;
+
+                const minSalary = parseInt(numbers[0]) * 1000; // Assume k
+
                 switch (selectedSalary) {
-                    case "Under $50k": return min < 50000;
-                    case "$50k - $100k": return min >= 50000 && min < 100000;
-                    case "$100k - $150k": return min >= 100000 && min < 150000;
-                    case "$150k - $200k": return min >= 150000 && min < 200000;
-                    case "Over $200k": return min >= 200000;
+                    case "Under $50k": return minSalary < 50000;
+                    case "$50k - $100k": return minSalary >= 50000 && minSalary < 100000;
+                    case "$100k - $150k": return minSalary >= 100000 && minSalary < 150000;
+                    case "$150k - $200k": return minSalary >= 150000 && minSalary < 200000;
+                    case "Over $200k": return minSalary >= 200000;
                     default: return true;
                 }
             });
@@ -209,7 +168,7 @@ function JobsContent() {
                 {/* Job Listings */}
                 <div className={styles.jobList}>
                     {loading ? (
-                        <div className={styles.loading}>Connecting to live database...</div>
+                        <div className={styles.loading}>Loading jobs...</div>
                     ) : filteredJobs.length === 0 ? (
                         <div className={styles.noResults}>
                             <p>No active jobs found.</p>
@@ -237,7 +196,7 @@ function JobsContent() {
                                     </span>
                                     <span className={styles.metaItem}>
                                         <DollarSign size={16} />
-                                        {job.salaryDisplay}
+                                        {job.salary}
                                     </span>
                                     <span className={styles.metaItem}>
                                         <Clock size={16} />

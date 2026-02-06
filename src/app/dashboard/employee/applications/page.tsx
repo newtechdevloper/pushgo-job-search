@@ -4,9 +4,15 @@ import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Briefcase, Calendar, CheckCircle, XCircle } from "lucide-react";
 import styles from "@/styles/dashboard.module.css";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+
+// Static mock data for applications
+const MOCK_APPLICATIONS = [
+    { id: "1", jobTitle: "Senior Full Stack Developer", companyName: "TechCorp AI", status: "interview", appliedAt: "2023-11-15T10:00:00Z", formattedDate: "11/15/2023", jobId: "1" },
+    { id: "2", jobTitle: "Product Designer", companyName: "DesignHub", status: "applied", appliedAt: "2023-11-20T14:30:00Z", formattedDate: "11/20/2023", jobId: "2" },
+    { id: "3", jobTitle: "Machine Learning Engineer", companyName: "AI Innovations", status: "rejected", appliedAt: "2023-11-10T09:15:00Z", formattedDate: "11/10/2023", jobId: "3" },
+    { id: "4", jobTitle: "Frontend Developer", companyName: "WebFlow Inc", status: "reviewing", appliedAt: "2023-11-18T16:45:00Z", formattedDate: "11/18/2023", jobId: "5" },
+];
 
 export default function EmployeeApplications() {
     const { user, loading: authLoading } = useAuth();
@@ -14,30 +20,13 @@ export default function EmployeeApplications() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchApplications = async () => {
-            if (!user) return;
-            try {
-                const q = query(collection(db, "applications"), where("applicantId", "==", user.uid));
-                const snapshot = await getDocs(q);
-                const appsData = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    // Handle optional salary if present in job details snapshot (not storing salary in app, might need to fetch job or store it at apply time. Storing Title is good enough for now)
-                    // The schema says we store jobTitle.
-                    formattedDate: doc.data().appliedAt ? new Date(doc.data().appliedAt.toDate()).toLocaleDateString() : "Unknown"
-                }));
-                setApplications(appsData);
-            } catch (error) {
-                console.error("Error fetching applications:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (!authLoading) {
-            fetchApplications();
-        }
-    }, [user, authLoading]);
+        // Simulate fetch delay
+        const timer = setTimeout(() => {
+            setApplications(MOCK_APPLICATIONS);
+            setLoading(false);
+        }, 600);
+        return () => clearTimeout(timer);
+    }, []);
 
     const getStatusBadge = (status: string) => {
         const statusMap: Record<string, string> = {
@@ -91,7 +80,6 @@ export default function EmployeeApplications() {
 
             {/* Applications Table */}
             <div className={styles.tableCard || styles.table}>
-                {/* Note: styles.tableCard is the new class I added, styles.table was the old container. Using fallback just in case */}
                 <div className={styles.tableHeader}>
                     <h2 className={styles.tableTitle}>All Applications</h2>
                 </div>
@@ -100,7 +88,7 @@ export default function EmployeeApplications() {
                         <thead>
                             <tr>
                                 <th>Job Title</th>
-                                <th>Company</th> {/* Schema doesn't strictly store Company Name in Application, only Job Title. I might need to fetch it or just show Job Title for now. Wait, schema had jobTitle. I'll just skip Company column if not available or show 'N/A' */}
+                                <th>Company</th>
                                 <th>Status</th>
                                 <th>Applied Date</th>
                                 <th>Action</th>
@@ -117,7 +105,7 @@ export default function EmployeeApplications() {
                                 applications.map((app) => (
                                     <tr key={app.id}>
                                         <td>{app.jobTitle}</td>
-                                        <td>{app.companyName || "-"}</td> {/* Assuming I might add companyName to application later, or it's missing now */}
+                                        <td>{app.companyName || "-"}</td>
                                         <td>
                                             <span className={`${styles.badge} ${styles[getStatusBadge(app.status)]}`}>
                                                 {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
