@@ -482,6 +482,12 @@
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(6, 182, 212, 0.1);
 }
 
+.roleOption.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .roleOptionActive {
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
     border-color: var(--neon-cyan);
