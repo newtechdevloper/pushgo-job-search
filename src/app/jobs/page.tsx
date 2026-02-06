@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { JOB_TYPES, SALARY_RANGES } from "@/data/jobs";
@@ -218,7 +219,11 @@ function JobsContent() {
                         filteredJobs.map(job => (
                             <div key={job.id} className={styles.jobCard}>
                                 <div className={styles.jobHeader}>
-                                    <h3 className={styles.jobTitle}>{job.title}</h3>
+                                    <h3 className={styles.jobTitle}>
+                                        <Link href={`/jobs/${job.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                            {job.title}
+                                        </Link>
+                                    </h3>
                                     <span className={styles.jobType} style={{ textTransform: 'capitalize' }}>
                                         {job.type?.replace("-", " ")}
                                     </span>
@@ -240,7 +245,9 @@ function JobsContent() {
                                     </span>
                                 </div>
                                 <div style={{ marginTop: '1rem' }}>
-                                    <button className={styles.applyBtn}>Apply Now</button>
+                                    <Link href={`/jobs/${job.id}`} className={styles.applyBtn} style={{ display: 'inline-block', textDecoration: 'none' }}>
+                                        View Details & Apply
+                                    </Link>
                                 </div>
                             </div>
                         ))
