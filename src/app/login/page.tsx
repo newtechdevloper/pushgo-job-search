@@ -84,9 +84,31 @@ export default function LoginPage() {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            // Redirect handled by useEffect above after auth state updates
+            // Redirect handled by useEffect above
         } catch (err: any) {
-            setError(err.message || "Failed to sign in");
+            console.error("Login error:", err);
+
+            // Smart Login: If credential is invalid, try creating the account!
+            if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found") {
+                try {
+                    console.log("Attempting to auto-create account...");
+                    const { createUserWithEmailAndPassword } = await import("firebase/auth");
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    // If successful, useEffect will handle redirect
+                    // And auto-promote will kick in
+                    return;
+                } catch (signupErr: any) {
+                    // If signup fails because email exists, THEN password was definitely wrong
+                    console.error("Auto-create failed:", signupErr);
+                    if (signupErr.code === "auth/email-already-in-use") {
+                        setError("Incorrect password. Please try again or reset password.");
+                    } else {
+                        setError("Login failed. Verify email/password.");
+                    }
+                }
+            } else {
+                setError(err.message || "Failed to sign in");
+            }
             setLoading(false);
         }
     };
