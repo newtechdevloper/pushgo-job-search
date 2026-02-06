@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import styles from "@/styles/login.module.css";
@@ -51,24 +51,11 @@ export default function LoginPage() {
 
         try {
             const provider = new GoogleAuthProvider();
-            const userCredential = await signInWithPopup(auth, provider);
-
-            // Fetch user role from Firestore
-            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-            const role = userDoc.exists() ? userDoc.data().role : "user";
-
-            // Redirect based on role
-            const dashboardMap: Record<string, string> = {
-                employee: "/dashboard/employee",
-                hr: "/dashboard/hr",
-                admin: "/dashboard/admin",
-                user: "/dashboard/user",
-            };
-
-            router.push(dashboardMap[role] || "/dashboard/user");
+            // Use redirect instead of popup to avoid popup blockers
+            await signInWithRedirect(auth, provider);
+            // Note: After redirect, user will be redirected back and AuthContext will handle the rest
         } catch (err: any) {
             setError(err.message || "Failed to sign in with Google");
-        } finally {
             setLoading(false);
         }
     };

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import styles from "@/styles/signup.module.css";
 
@@ -62,11 +62,11 @@ export default function SignupPage() {
 
         try {
             const provider = new GoogleAuthProvider();
-            await signInWithPopup(auth, provider);
-            router.push("/dashboard/user");
+            // Use redirect instead of popup to avoid popup blockers
+            await signInWithRedirect(auth, provider);
+            // Note: After redirect, user will be redirected back and AuthContext will handle the rest
         } catch (err: any) {
             setError(err.message || "Failed to sign up with Google");
-        } finally {
             setLoading(false);
         }
     };
