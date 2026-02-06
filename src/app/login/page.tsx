@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
@@ -19,6 +19,19 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const { user, userRole, loading: authLoading } = useAuth(); // Get auth state from context
 
+    // Check for redirect result on mount
+    useEffect(() => {
+        const checkRedirect = async () => {
+            try {
+                await getRedirectResult(auth);
+            } catch (err: any) {
+                console.error("Redirect login error:", err);
+                setError(err.message || "Failed to sign in with Google");
+            }
+        };
+        checkRedirect();
+    }, []);
+
     // Redirect if already logged in
     useEffect(() => {
         if (!authLoading && user && userRole) {
@@ -31,6 +44,38 @@ export default function LoginPage() {
             router.push(dashboardMap[userRole] || "/dashboard/user");
         }
     }, [user, userRole, authLoading, router]);
+
+    // Show loading spinner while checking auth state
+    if (authLoading) {
+        return (
+            <div style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "100vh",
+                background: "#0f172a",
+                color: "#94a3b8"
+            }}>
+                <div style={{ textAlign: "center" }}>
+                    <div style={{
+                        width: "40px",
+                        height: "40px",
+                        border: "3px solid rgba(255,255,255,0.1)",
+                        borderTopColor: "#3b82f6",
+                        borderRadius: "50%",
+                        animation: "spin 1s linear infinite",
+                        margin: "0 auto 1rem"
+                    }}></div>
+                    <p>Verifying session...</p>
+                </div>
+                <style jsx>{`
+                    @keyframes spin {
+                        to { transform: rotate(360deg); }
+                    }
+                `}</style>
+            </div>
+        );
+    }
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
