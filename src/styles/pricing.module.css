@@ -1,0 +1,148 @@
+.container {
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+    min-height: 100vh;
+    background: var(--navy-900);
+}
+
+.header {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, #a78bfa);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-cyan);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.popular {
+    border-color: var(--neon-purple);
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--neon-purple);
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.planName {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.price span {
+    font-size: 1rem;
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.description {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.features {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.feature {
+    color: #cbd5e1;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.feature:last-child {
+    border-bottom: none;
+}
+
+.checkIcon {
+    color: var(--neon-cyan);
+    flex-shrink: 0;
+}
+
+.button {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.button:hover {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+.primaryButton {
+    background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
+    border: none;
+}
+
+.primaryButton:hover {
+    opacity: 0.9;
+    background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
+    color: #fff;
+}

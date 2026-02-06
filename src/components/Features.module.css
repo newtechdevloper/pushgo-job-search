@@ -1,0 +1,100 @@
+.section {
+    padding: 6rem 0;
+    position: relative;
+}
+
+.titleContainer {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 4rem;
+}
+
+.title {
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1rem;
+}
+
+.highlight {
+    color: var(--neon-cyan);
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 1.125rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+}
+
+.iconWrapper {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--neon-cyan);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover .iconWrapper {
+    color: var(--neon-purple);
+    background: rgba(139, 92, 246, 0.1);
+}
+
+.cardTitle {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.75rem;
+    transition: color 0.3s;
+}
+
+.card:hover .cardTitle {
+    color: var(--neon-cyan);
+}
+
+.cardDesc {
+    color: #94a3b8;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.card:hover .cardDesc {
+    color: #cbd5e1;
+}

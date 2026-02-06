@@ -1,0 +1,122 @@
+.section {
+    padding: 6rem 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+    .header {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+    }
+}
+
+.title {
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #94a3b8;
+}
+
+.viewAllBtn {
+    display: none;
+    color: var(--neon-cyan);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.viewAllBtn:hover {
+    text-decoration: underline;
+    color: var(--neon-blue);
+}
+
+@media (min-width: 768px) {
+    .viewAllBtn {
+        display: inline-block;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(6, 182, 212, 0.5);
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+}
+
+.icon {
+    margin-bottom: 1rem;
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+
+.card:hover .icon {
+    color: var(--neon-cyan);
+}
+
+.cardName {
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+}
+
+.jobCount {
+    font-size: 0.875rem;
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+.card:hover .jobCount {
+    color: #94a3b8;
+}
+
+.mobileBtnContainer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .mobileBtnContainer {
+        display: none;
+    }
+}
+
+.mobileViewAllBtn {
+    color: var(--neon-cyan);
+    font-weight: 500;
+}

@@ -1,0 +1,215 @@
+.heroSection {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 80px;
+}
+
+.heroBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.blobPurple {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 50%;
+    filter: blur(120px);
+    animation: pulse 4s infinite alternate;
+}
+
+.blobCyan {
+    position: absolute;
+    bottom: 10%;
+    right: -5%;
+    width: 600px;
+    height: 600px;
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: 50%;
+    filter: blur(120px);
+    animation: pulse 4s infinite alternate-reverse;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+.heroContent {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 0 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 9999px;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--neon-cyan);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.heading {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    color: var(--white);
+}
+
+.textGradient {
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.subText {
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    line-height: 1.6;
+}
+
+.searchContainer {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .searchContainer {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.searchInputWrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.searchInputWrapper:focus-within {
+    border-color: rgba(6, 182, 212, 0.5);
+}
+
+.searchIcon {
+    color: #94a3b8;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+}
+
+.searchInput {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--white);
+    width: 100%;
+    font-size: 1rem;
+}
+
+.searchInput::placeholder {
+    color: #64748b;
+}
+
+.divider {
+    display: none;
+    width: 1px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+    .divider {
+        display: block;
+    }
+}
+
+.searchBtn {
+    width: 100%;
+    padding: 14px 28px;
+    border-radius: 0.75rem;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue));
+    color: var(--white);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: box-shadow 0.2s;
+}
+
+@media (min-width: 768px) {
+    .searchBtn {
+        width: auto;
+    }
+}
+
+.searchBtn:hover {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.stats {
+    margin-top: 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}

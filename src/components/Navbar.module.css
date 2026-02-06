@@ -1,0 +1,128 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    transition: all 0.3s ease;
+    padding: 1.5rem 0;
+    background: transparent;
+}
+
+.scrolled {
+    background: rgba(11, 15, 26, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.navContainer {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    text-decoration: none;
+}
+
+.logoSpan {
+    color: var(--neon-cyan);
+}
+
+.desktopMenu {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.navLink {
+    color: #94a3b8;
+    /* Slate-400 */
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navLink:hover {
+    color: var(--white);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.joinBtn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+    color: var(--white);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.joinBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.mobileToggle {
+    display: none;
+    color: var(--white);
+}
+
+@media (max-width: 768px) {
+    .navContainer {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .desktopMenu,
+    .actions {
+        display: none;
+    }
+
+    .mobileToggle {
+        display: block;
+    }
+}
+
+.mobileMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(11, 15, 26, 0.95);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.mobileBtn {
+    width: 100%;
+    max-width: 200px;
+    padding: 0.8rem;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+    color: var(--white);
+    font-weight: 600;
+    margin-top: 1rem;
+}
