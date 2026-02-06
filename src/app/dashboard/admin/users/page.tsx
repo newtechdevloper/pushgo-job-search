@@ -27,10 +27,16 @@ export default function AdminUsersPage() {
                     <h1 className={styles.pageTitle}>User Management</h1>
                     <p className={styles.pageSubtitle}>Manage all platform users and their roles</p>
                 </div>
-                <Link href="/dashboard/admin/users/roles" className={styles.primaryBtn}>
-                    <UserCog size={18} />
-                    Manage User Roles
-                </Link>
+                <div style={{ display: "flex", gap: "1rem" }}>
+                    <Link href="/dashboard/admin/users/roles" className={styles.primaryBtn}>
+                        <UserCog size={18} />
+                        Assign Role
+                    </Link>
+                    <button className={styles.primaryBtn} style={{ background: "linear-gradient(135deg, #10b981, #059669)" }}>
+                        <Users size={18} />
+                        Add User
+                    </button>
+                </div>
             </div>
 
             <div className={styles.statsGrid}>
