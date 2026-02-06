@@ -1,10 +1,24 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Search, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [location, setLocation] = useState("");
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        const params = new URLSearchParams();
+        if (searchQuery) params.set("q", searchQuery);
+        if (location) params.set("location", location);
+        router.push(`/jobs?${params.toString()}`);
+    };
+
     return (
         <section className={styles.heroSection}>
             {/* Background Decor */}
@@ -43,11 +57,12 @@ export default function Hero() {
                 </motion.p>
 
                 {/* Search Component */}
-                <motion.div
+                <motion.form
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
                     className={styles.searchContainer}
+                    onSubmit={handleSearch}
                 >
                     <div className={styles.searchInputWrapper}>
                         <Search className={styles.searchIcon} />
@@ -55,6 +70,8 @@ export default function Hero() {
                             type="text"
                             placeholder="Job title, keywords..."
                             className={styles.searchInput}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
 
@@ -66,14 +83,16 @@ export default function Hero() {
                             type="text"
                             placeholder="Location or 'Remote'"
                             className={styles.searchInput}
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
                         />
                     </div>
 
-                    <button className={styles.searchBtn}>
+                    <button type="submit" className={styles.searchBtn}>
                         <span>Search</span>
                         <ArrowRight size={18} />
                     </button>
-                </motion.div>
+                </motion.form>
 
                 {/* Stats */}
                 <motion.div
