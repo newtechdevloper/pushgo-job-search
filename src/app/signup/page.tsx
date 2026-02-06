@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { createUserWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider, updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "@/styles/signup.module.css";
 
 export default function SignupPage() {
@@ -20,6 +21,20 @@ export default function SignupPage() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const { user, userRole, loading: authLoading } = useAuth();
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (!authLoading && user && userRole) {
+            const dashboardMap: Record<string, string> = {
+                employee: "/dashboard/employee",
+                hr: "/dashboard/hr",
+                admin: "/dashboard/admin",
+                user: "/dashboard/user",
+            };
+            router.push(dashboardMap[userRole] || "/dashboard/user");
+        }
+    }, [user, userRole, authLoading, router]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,10 +63,9 @@ export default function SignupPage() {
                 displayName: formData.name,
             });
 
-            router.push("/dashboard/user");
+            // Redirect handled by useEffect above
         } catch (err: any) {
             setError(err.message || "Failed to create account");
-        } finally {
             setLoading(false);
         }
     };

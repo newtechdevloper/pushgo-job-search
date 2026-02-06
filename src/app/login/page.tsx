@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { signInWithEmailAndPassword, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
 import styles from "@/styles/login.module.css";
 
 export default function LoginPage() {
@@ -16,6 +17,20 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const { user, userRole, loading: authLoading } = useAuth(); // Get auth state from context
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (!authLoading && user && userRole) {
+            const dashboardMap: Record<string, string> = {
+                employee: "/dashboard/employee",
+                hr: "/dashboard/hr",
+                admin: "/dashboard/admin",
+                user: "/dashboard/user",
+            };
+            router.push(dashboardMap[userRole] || "/dashboard/user");
+        }
+    }, [user, userRole, authLoading, router]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,24 +38,10 @@ export default function LoginPage() {
         setError("");
 
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-            // Fetch user role from Firestore
-            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-            const role = userDoc.exists() ? userDoc.data().role : "user";
-
-            // Redirect based on role
-            const dashboardMap: Record<string, string> = {
-                employee: "/dashboard/employee",
-                hr: "/dashboard/hr",
-                admin: "/dashboard/admin",
-                user: "/dashboard/user",
-            };
-
-            router.push(dashboardMap[role] || "/dashboard/user");
+            await signInWithEmailAndPassword(auth, email, password);
+            // Redirect handled by useEffect above after auth state updates
         } catch (err: any) {
             setError(err.message || "Failed to sign in");
-        } finally {
             setLoading(false);
         }
     };
