@@ -1,62 +1,106 @@
 "use client";
 
 import DashboardLayout from "@/components/DashboardLayout";
-import { Mail, Shield, MoreVertical } from "lucide-react";
+import { Users, Mail, Calendar, Shield, UserCog } from "lucide-react";
+import Link from "next/link";
 import styles from "@/styles/dashboard.module.css";
 
-export default function AdminUsers() {
+export default function AdminUsersPage() {
     const users = [
-        { id: 1, name: "John Doe", email: "john@example.com", role: "Employee", status: "Active", joined: "2024-01-15" },
-        { id: 2, name: "Sarah Johnson", email: "sarah@techcorp.ai", role: "HR", status: "Active", joined: "2024-01-10" },
-        { id: 3, name: "Mike Chen", email: "mike@example.com", role: "Employee", status: "Active", joined: "2024-01-20" },
-        { id: 4, name: "Emily Davis", email: "emily@example.com", role: "Employee", status: "Inactive", joined: "2023-12-05" },
+        { id: 1, name: "John Doe", email: "john@example.com", role: "Employee", status: "Active", joinedDate: "2024-01-15" },
+        { id: 2, name: "Jane Smith", email: "jane@example.com", role: "HR", status: "Active", joinedDate: "2024-01-20" },
+        { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "User", status: "Active", joinedDate: "2024-02-01" },
+        { id: 4, name: "Alice Williams", email: "alice@example.com", role: "Employee", status: "Inactive", joinedDate: "2024-01-10" },
+    ];
+
+    const stats = [
+        { label: "Total Users", value: "1,234", icon: Users, color: "purple" },
+        { label: "Active Users", value: "987", icon: Users, color: "cyan" },
+        { label: "New This Month", value: "45", icon: Calendar, color: "green" },
+        { label: "Admins", value: "8", icon: Shield, color: "orange" },
     ];
 
     return (
         <DashboardLayout role="admin" userName="Admin">
-            <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: "700", marginBottom: "1.5rem" }}>
-                User Management
-            </h2>
+            <div className={styles.pageHeader}>
+                <div>
+                    <h1 className={styles.pageTitle}>User Management</h1>
+                    <p className={styles.pageSubtitle}>Manage all platform users and their roles</p>
+                </div>
+                <Link href="/dashboard/admin/users/roles" className={styles.primaryBtn}>
+                    <UserCog size={18} />
+                    Manage User Roles
+                </Link>
+            </div>
 
-            <div className={styles.table}>
-                <div className={styles.tableContent}>
-                    <table className={styles.tableElement}>
+            <div className={styles.statsGrid}>
+                {stats.map((stat, index) => {
+                    const Icon = stat.icon;
+                    return (
+                        <div key={index} className={styles.statCard}>
+                            <div className={`${styles.statIcon} ${styles[`stat${stat.color.charAt(0).toUpperCase() + stat.color.slice(1)}`]}`}>
+                                <Icon size={24} />
+                            </div>
+                            <div className={styles.statContent}>
+                                <div className={styles.statValue}>{stat.value}</div>
+                                <div className={styles.statLabel}>{stat.label}</div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            <div className={styles.tableCard}>
+                <div className={styles.tableHeader}>
+                    <h2 className={styles.tableTitle}>All Users</h2>
+                    <input
+                        type="search"
+                        placeholder="Search users..."
+                        className={styles.searchInput}
+                    />
+                </div>
+                <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>User</th>
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Joined</th>
+                                <th>Joined Date</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {users.map((user) => (
                                 <tr key={user.id}>
-                                    <td style={{ fontWeight: "600" }}>{user.name}</td>
                                     <td>
-                                        <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                            <Mail size={14} color="#06b6d4" />
-                                            {user.email}
-                                        </span>
+                                        <div className={styles.userCell}>
+                                            <div className={styles.avatar}>{user.name.charAt(0)}</div>
+                                            <span>{user.name}</span>
+                                        </div>
                                     </td>
                                     <td>
-                                        <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                            <Shield size={14} color="#8b5cf6" />
+                                        <div className={styles.emailCell}>
+                                            <Mail size={14} />
+                                            {user.email}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span className={`${styles.badge} ${styles.badgeInfo}`}>
                                             {user.role}
                                         </span>
                                     </td>
                                     <td>
-                                        <span className={`${styles.badge} ${user.status === "Active" ? styles.success : styles.warning}`}>
+                                        <span className={`${styles.badge} ${user.status === "Active" ? styles.badgeSuccess : styles.badgeWarning}`}>
                                             {user.status}
                                         </span>
                                     </td>
-                                    <td>{user.joined}</td>
+                                    <td>{user.joinedDate}</td>
                                     <td>
-                                        <button style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8" }}>
-                                            <MoreVertical size={18} />
-                                        </button>
+                                        <Link href={`/dashboard/admin/users/roles?userId=${user.id}`} className={styles.actionBtn}>
+                                            Edit Role
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}
