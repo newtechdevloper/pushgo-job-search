@@ -4,13 +4,15 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // TODO: Replace with your Firebase project configuration
+// Hardcoded configuration to resolve environment variable loading issues
 const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "demo-api-key",
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-project",
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "demo.appspot.com",
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:abcdef",
+    apiKey: "AIzaSyCo5oerWoRV2czP78gVJYas6AVIfve_c54",
+    authDomain: "pushgo-cf875.firebaseapp.com",
+    projectId: "pushgo-cf875",
+    storageBucket: "pushgo-cf875.firebasestorage.app",
+    messagingSenderId: "911430817259",
+    appId: "1:911430817259:web:caf82c1ff4747c9b2975ae",
+    measurementId: "G-J48HZNW9V7"
 };
 
 // Initialize Firebase
