@@ -1,91 +1,78 @@
 "use client";
 
+import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Briefcase, BookmarkCheck, TrendingUp, Clock } from "lucide-react";
+import { Briefcase, Bookmark, TrendingUp, Clock } from "lucide-react";
+import Link from "next/link";
 import styles from "@/styles/dashboard.module.css";
 
 export default function EmployeeDashboard() {
-    const stats = [
-        { label: "Applied Jobs", value: "12", change: "+3 this week", positive: true, icon: Briefcase },
-        { label: "Saved Jobs", value: "8", change: "2 new matches", positive: true, icon: BookmarkCheck },
-        { label: "Interviews", value: "3", change: "1 upcoming", positive: true, icon: TrendingUp },
-        { label: "Profile Views", value: "45", change: "+12 this week", positive: true, icon: Clock },
-    ];
-
-    const applications = [
-        { id: 1, job: "Senior Frontend Developer", company: "TechCorp", status: "Interview", date: "2 days ago" },
-        { id: 2, job: "Product Designer", company: "DesignHub", status: "Applied", date: "5 days ago" },
-        { id: 3, job: "Full Stack Engineer", company: "StartupXYZ", status: "Reviewing", date: "1 week ago" },
-        { id: 4, job: "UI/UX Designer", company: "Creative Studio", status: "Rejected", date: "2 weeks ago" },
-    ];
-
-    const getStatusBadge = (status: string) => {
-        const statusMap: Record<string, string> = {
-            "Interview": "success",
-            "Applied": "info",
-            "Reviewing": "warning",
-            "Rejected": "error",
-        };
-        return statusMap[status] || "info";
-    };
-
     return (
-        <DashboardLayout role="employee" userName="John">
-            {/* Stats Grid */}
-            <div className={styles.statsGrid}>
-                {stats.map((stat, index) => {
-                    const Icon = stat.icon;
-                    return (
-                        <div key={index} className={styles.statCard}>
-                            <div className={styles.statHeader}>
-                                <div>
-                                    <div className={styles.statValue}>{stat.value}</div>
-                                    <div className={styles.statLabel}>{stat.label}</div>
-                                </div>
-                                <div className={styles.statIcon}>
-                                    <Icon size={24} color="#06b6d4" />
-                                </div>
-                            </div>
-                            <div className={`${styles.statChange} ${stat.positive ? styles.positive : styles.negative}`}>
-                                {stat.change}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+        <ProtectedRoute requiredRole="employee">
+            <DashboardLayout role="employee" userName="Employee">
+                <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: "700", marginBottom: "1.5rem" }}>
+                    Employee Dashboard
+                </h2>
 
-            {/* Recent Applications */}
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <h2 className={styles.tableTitle}>Recent Applications</h2>
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Briefcase size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>12</div>
+                            <div className={styles.statLabel}>Applications</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Bookmark size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>8</div>
+                            <div className={styles.statLabel}>Saved Jobs</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <TrendingUp size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>3</div>
+                            <div className={styles.statLabel}>Interviews</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Clock size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>5</div>
+                            <div className={styles.statLabel}>Pending</div>
+                        </div>
+                    </div>
                 </div>
-                <div className={styles.tableContent}>
-                    <table className={styles.tableElement}>
-                        <thead>
-                            <tr>
-                                <th>Job Title</th>
-                                <th>Company</th>
-                                <th>Status</th>
-                                <th>Applied</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {applications.map((app) => (
-                                <tr key={app.id}>
-                                    <td>{app.job}</td>
-                                    <td>{app.company}</td>
-                                    <td>
-                                        <span className={`${styles.badge} ${styles[getStatusBadge(app.status)]}`}>
-                                            {app.status}
-                                        </span>
-                                    </td>
-                                    <td>{app.date}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                <div className={styles.quickActions}>
+                    <h3 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>
+                        Quick Actions
+                    </h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                        <Link href="/dashboard/employee/applications" className={styles.actionCard}>
+                            <Briefcase size={20} />
+                            View Applications
+                        </Link>
+                        <Link href="/dashboard/employee/saved" className={styles.actionCard}>
+                            <Bookmark size={20} />
+                            Saved Jobs
+                        </Link>
+                        <Link href="/jobs" className={styles.actionCard}>
+                            <TrendingUp size={20} />
+                            Browse Jobs
+                        </Link>
+                    </div>
                 </div>
-            </div>
-        </DashboardLayout>
+            </DashboardLayout>
+        </ProtectedRoute>
     );
 }

@@ -1,91 +1,78 @@
 "use client";
 
+import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Users, Briefcase, Building2, DollarSign } from "lucide-react";
+import { Users, Building2, TrendingUp, Shield } from "lucide-react";
+import Link from "next/link";
 import styles from "@/styles/dashboard.module.css";
 
 export default function AdminDashboard() {
-    const stats = [
-        { label: "Total Users", value: "2,847", change: "+127 this month", positive: true, icon: Users },
-        { label: "Active Jobs", value: "342", change: "+45 this week", positive: true, icon: Briefcase },
-        { label: "Companies", value: "156", change: "+12 verified", positive: true, icon: Building2 },
-        { label: "Revenue", value: "$48.2k", change: "+18% this month", positive: true, icon: DollarSign },
-    ];
-
-    const recentActivity = [
-        { id: 1, action: "New company registered", entity: "TechCorp AI", type: "Company", time: "10 min ago" },
-        { id: 2, action: "Job post approved", entity: "Senior Developer", type: "Job", time: "1 hour ago" },
-        { id: 3, action: "User verification", entity: "john@example.com", type: "User", time: "2 hours ago" },
-        { id: 4, action: "Subscription upgraded", entity: "DesignHub", type: "Billing", time: "5 hours ago" },
-    ];
-
-    const getTypeBadge = (type: string) => {
-        const typeMap: Record<string, string> = {
-            "Company": "success",
-            "Job": "info",
-            "User": "warning",
-            "Billing": "success",
-        };
-        return typeMap[type] || "info";
-    };
-
     return (
-        <DashboardLayout role="admin" userName="Admin">
-            {/* Stats Grid */}
-            <div className={styles.statsGrid}>
-                {stats.map((stat, index) => {
-                    const Icon = stat.icon;
-                    return (
-                        <div key={index} className={styles.statCard}>
-                            <div className={styles.statHeader}>
-                                <div>
-                                    <div className={styles.statValue}>{stat.value}</div>
-                                    <div className={styles.statLabel}>{stat.label}</div>
-                                </div>
-                                <div className={styles.statIcon}>
-                                    <Icon size={24} color="#06b6d4" />
-                                </div>
-                            </div>
-                            <div className={`${styles.statChange} ${stat.positive ? styles.positive : styles.negative}`}>
-                                {stat.change}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+        <ProtectedRoute requiredRole="admin">
+            <DashboardLayout role="admin" userName="Admin">
+                <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: "700", marginBottom: "1.5rem" }}>
+                    Admin Dashboard
+                </h2>
 
-            {/* Recent Activity */}
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <h2 className={styles.tableTitle}>Recent Platform Activity</h2>
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Users size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>1,234</div>
+                            <div className={styles.statLabel}>Total Users</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Building2 size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>89</div>
+                            <div className={styles.statLabel}>Companies</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <TrendingUp size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>456</div>
+                            <div className={styles.statLabel}>Active Jobs</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Shield size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>12</div>
+                            <div className={styles.statLabel}>Admins</div>
+                        </div>
+                    </div>
                 </div>
-                <div className={styles.tableContent}>
-                    <table className={styles.tableElement}>
-                        <thead>
-                            <tr>
-                                <th>Action</th>
-                                <th>Entity</th>
-                                <th>Type</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recentActivity.map((activity) => (
-                                <tr key={activity.id}>
-                                    <td>{activity.action}</td>
-                                    <td>{activity.entity}</td>
-                                    <td>
-                                        <span className={`${styles.badge} ${styles[getTypeBadge(activity.type)]}`}>
-                                            {activity.type}
-                                        </span>
-                                    </td>
-                                    <td>{activity.time}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                <div className={styles.quickActions}>
+                    <h3 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>
+                        Quick Actions
+                    </h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                        <Link href="/dashboard/admin/users" className={styles.actionCard}>
+                            <Users size={20} />
+                            Manage Users
+                        </Link>
+                        <Link href="/dashboard/admin/companies" className={styles.actionCard}>
+                            <Building2 size={20} />
+                            Manage Companies
+                        </Link>
+                        <Link href="/dashboard/admin/analytics" className={styles.actionCard}>
+                            <TrendingUp size={20} />
+                            View Analytics
+                        </Link>
+                    </div>
                 </div>
-            </div>
-        </DashboardLayout>
+            </DashboardLayout>
+        </ProtectedRoute>
     );
 }

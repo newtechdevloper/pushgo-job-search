@@ -1,75 +1,78 @@
 "use client";
 
+import ProtectedRoute from "@/components/ProtectedRoute";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Activity, Bookmark, Bell, User } from "lucide-react";
+import { Activity, Bell, Settings, User } from "lucide-react";
+import Link from "next/link";
 import styles from "@/styles/dashboard.module.css";
 
 export default function UserDashboard() {
-    const stats = [
-        { label: "Profile Completion", value: "85%", change: "Complete your profile", positive: true, icon: User },
-        { label: "Saved Searches", value: "5", change: "2 new matches", positive: true, icon: Bookmark },
-        { label: "Notifications", value: "12", change: "3 unread", positive: true, icon: Bell },
-        { label: "Account Age", value: "6mo", change: "Member since Jan", positive: true, icon: Activity },
-    ];
-
-    const recentActivity = [
-        { id: 1, action: "Saved job", detail: "Senior Developer at TechCorp", time: "2 hours ago" },
-        { id: 2, action: "Updated profile", detail: "Added new skills", time: "1 day ago" },
-        { id: 3, action: "Created search alert", detail: "Remote React jobs", time: "3 days ago" },
-        { id: 4, action: "Viewed company", detail: "DesignHub profile", time: "1 week ago" },
-    ];
-
     return (
-        <DashboardLayout role="user" userName="Alex">
-            {/* Stats Grid */}
-            <div className={styles.statsGrid}>
-                {stats.map((stat, index) => {
-                    const Icon = stat.icon;
-                    return (
-                        <div key={index} className={styles.statCard}>
-                            <div className={styles.statHeader}>
-                                <div>
-                                    <div className={styles.statValue}>{stat.value}</div>
-                                    <div className={styles.statLabel}>{stat.label}</div>
-                                </div>
-                                <div className={styles.statIcon}>
-                                    <Icon size={24} color="#8b5cf6" />
-                                </div>
-                            </div>
-                            <div className={`${styles.statChange} ${stat.positive ? styles.positive : styles.negative}`}>
-                                {stat.change}
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
+        <ProtectedRoute requiredRole="user">
+            <DashboardLayout role="user" userName="User">
+                <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: "700", marginBottom: "1.5rem" }}>
+                    User Dashboard
+                </h2>
 
-            {/* Recent Activity */}
-            <div className={styles.table}>
-                <div className={styles.tableHeader}>
-                    <h2 className={styles.tableTitle}>Your Recent Activity</h2>
+                <div className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Activity size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>24</div>
+                            <div className={styles.statLabel}>Activities</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Bell size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>5</div>
+                            <div className={styles.statLabel}>Notifications</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <User size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>100%</div>
+                            <div className={styles.statLabel}>Profile Complete</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={styles.statIcon}>
+                            <Settings size={24} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statValue}>3</div>
+                            <div className={styles.statLabel}>Settings</div>
+                        </div>
+                    </div>
                 </div>
-                <div className={styles.tableContent}>
-                    <table className={styles.tableElement}>
-                        <thead>
-                            <tr>
-                                <th>Action</th>
-                                <th>Details</th>
-                                <th>Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recentActivity.map((activity) => (
-                                <tr key={activity.id}>
-                                    <td>{activity.action}</td>
-                                    <td>{activity.detail}</td>
-                                    <td>{activity.time}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+
+                <div className={styles.quickActions}>
+                    <h3 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: "600", marginBottom: "1rem" }}>
+                        Quick Actions
+                    </h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                        <Link href="/dashboard/user/activity" className={styles.actionCard}>
+                            <Activity size={20} />
+                            View Activity
+                        </Link>
+                        <Link href="/dashboard/user/settings" className={styles.actionCard}>
+                            <Settings size={20} />
+                            Settings
+                        </Link>
+                        <Link href="/jobs" className={styles.actionCard}>
+                            <User size={20} />
+                            Browse Jobs
+                        </Link>
+                    </div>
                 </div>
-            </div>
-        </DashboardLayout>
+            </DashboardLayout>
+        </ProtectedRoute>
     );
 }

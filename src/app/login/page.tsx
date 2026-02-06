@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 import styles from "@/styles/login.module.css";
 
 export default function LoginPage() {
@@ -22,8 +23,21 @@ export default function LoginPage() {
         setError("");
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            router.push("/dashboard/user");
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+            // Fetch user role from Firestore
+            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+            const role = userDoc.exists() ? userDoc.data().role : "user";
+
+            // Redirect based on role
+            const dashboardMap: Record<string, string> = {
+                employee: "/dashboard/employee",
+                hr: "/dashboard/hr",
+                admin: "/dashboard/admin",
+                user: "/dashboard/user",
+            };
+
+            router.push(dashboardMap[role] || "/dashboard/user");
         } catch (err: any) {
             setError(err.message || "Failed to sign in");
         } finally {
@@ -37,8 +51,21 @@ export default function LoginPage() {
 
         try {
             const provider = new GoogleAuthProvider();
-            await signInWithPopup(auth, provider);
-            router.push("/dashboard/user");
+            const userCredential = await signInWithPopup(auth, provider);
+
+            // Fetch user role from Firestore
+            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+            const role = userDoc.exists() ? userDoc.data().role : "user";
+
+            // Redirect based on role
+            const dashboardMap: Record<string, string> = {
+                employee: "/dashboard/employee",
+                hr: "/dashboard/hr",
+                admin: "/dashboard/admin",
+                user: "/dashboard/user",
+            };
+
+            router.push(dashboardMap[role] || "/dashboard/user");
         } catch (err: any) {
             setError(err.message || "Failed to sign in with Google");
         } finally {
