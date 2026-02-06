@@ -83,8 +83,23 @@ export default function LoginPage() {
         setError("");
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
-            // Redirect handled by useEffect above
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+            // Explicitly handle redirect to ensure UI doesn't hang
+            console.log("Login successful, fetching role...");
+            const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+            const role = userDoc.exists() ? userDoc.data().role : "user";
+
+            const dashboardMap: Record<string, string> = {
+                employee: "/dashboard/employee",
+                hr: "/dashboard/hr",
+                admin: "/dashboard/admin",
+                user: "/dashboard/user",
+            };
+
+            console.log(`Redirecting to ${dashboardMap[role] || "/dashboard/user"}...`);
+            router.push(dashboardMap[role] || "/dashboard/user");
+
         } catch (err: any) {
             console.error("Login error:", err);
 
@@ -93,23 +108,36 @@ export default function LoginPage() {
                 try {
                     console.log("Attempting to auto-create account...");
                     const { createUserWithEmailAndPassword } = await import("firebase/auth");
-                    await createUserWithEmailAndPassword(auth, email, password);
-                    // If successful, useEffect will handle redirect
-                    // And auto-promote will kick in
+                    const { setDoc } = await import("firebase/firestore"); // Import setDoc
+
+                    const newUserCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+                    // Creates user doc immediately locally to ensure speed
+                    await setDoc(doc(db, "users", newUserCredential.user.uid), {
+                        email: email,
+                        role: "user", // Default, will be auto-promoted if matches
+                        createdAt: new Date()
+                    });
+
+                    // Redirect immediately
+                    console.log("Auto-creation successful, redirecting...");
+                    router.push("/dashboard/user"); // Default for new users
                     return;
+
                 } catch (signupErr: any) {
-                    // If signup fails because email exists, THEN password was definitely wrong
                     console.error("Auto-create failed:", signupErr);
+                    // If signup fails because email exists, THEN password was definitely wrong
                     if (signupErr.code === "auth/email-already-in-use") {
                         setError("Incorrect password. Please try again or reset password.");
                     } else {
-                        setError("Login failed. Verify email/password.");
+                        setError("Login failed. Verify email and password.");
                     }
+                    setLoading(false); // Stop loading only on final error
                 }
             } else {
                 setError(err.message || "Failed to sign in");
+                setLoading(false);
             }
-            setLoading(false);
         }
     };
 
