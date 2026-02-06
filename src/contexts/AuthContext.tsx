@@ -1,22 +1,19 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
+// Removed Firebase Auth imports to disable real login
 
 export type UserRole = "employee" | "hr" | "admin" | "user";
 
 interface UserData {
+    uid: string;
     email: string;
     displayName: string;
     role: UserRole;
-    createdAt: Date;
 }
 
 interface AuthContextType {
-    user: User | null;
+    user: UserData | null;
     userRole: UserRole | null;
     loading: boolean;
     signOut: () => Promise<void>;
@@ -26,7 +23,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
     user: null,
     userRole: null,
-    loading: true,
+    loading: false,
     signOut: async () => { },
     refreshUserRole: async () => { },
 });
@@ -34,81 +31,23 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const [userRole, setUserRole] = useState<UserRole | null>(null);
-    const [loading, setLoading] = useState(true);
-    const router = useRouter();
+    // MOCK USER DATA - Always logged in as Admin
+    const [user, setUser] = useState<UserData | null>({
+        uid: "mock-admin-user",
+        email: "admin@pushgo.com",
+        displayName: "Admin User",
+        role: "admin"
+    });
+    const [userRole, setUserRole] = useState<UserRole | null>("admin");
+    const [loading, setLoading] = useState(false);
 
-    const fetchUserRole = async (uid: string): Promise<UserRole> => {
-        try {
-            const userDoc = await getDoc(doc(db, "users", uid));
-            if (userDoc.exists()) {
-                return userDoc.data().role as UserRole;
-            }
-            // Default role for new users
-            return "user";
-        } catch (error) {
-            console.error("Error fetching user role:", error);
-            return "user";
-        }
-    };
-
-    const createUserDocument = async (user: User, role: UserRole = "user") => {
-        try {
-            const userRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userRef);
-
-            if (!userDoc.exists()) {
-                const userData: UserData = {
-                    email: user.email || "",
-                    displayName: user.displayName || "",
-                    role: role,
-                    createdAt: new Date(),
-                };
-                await setDoc(userRef, userData);
-            }
-        } catch (error) {
-            console.error("Error creating user document:", error);
-        }
+    // Mock functions
+    const signOut = async () => {
+        alert("Authentication is disabled. You are always logged in as Admin.");
     };
 
     const refreshUserRole = async () => {
-        if (user) {
-            const role = await fetchUserRole(user.uid);
-            setUserRole(role);
-        }
-    };
-
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            setUser(user);
-
-            if (user) {
-                // Create user document if it doesn't exist
-                await createUserDocument(user);
-
-                // Fetch user role
-                const role = await fetchUserRole(user.uid);
-                setUserRole(role);
-            } else {
-                setUserRole(null);
-            }
-
-            setLoading(false);
-        });
-
-        return () => unsubscribe();
-    }, []);
-
-    const signOut = async () => {
-        try {
-            await firebaseSignOut(auth);
-            setUser(null);
-            setUserRole(null);
-            router.push("/login");
-        } catch (error) {
-            console.error("Error signing out:", error);
-        }
+        // No-op for mock
     };
 
     const value = {

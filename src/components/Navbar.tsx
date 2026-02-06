@@ -39,8 +39,8 @@ export default function Navbar() {
 
                 {/* Right Actions */}
                 <div className={styles.actions}>
-                    <Link href="/jobs">
-                        <button className={styles.joinBtn}>Join Now</button>
+                    <Link href="/dashboard/admin">
+                        <button className={styles.joinBtn}>Dashboard</button>
                     </Link>
                 </div>
 
