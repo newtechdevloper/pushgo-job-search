@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Mail, Lock, Eye, EyeOff, User, Briefcase, Users, Shield } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import styles from "@/styles/signup.module.css";
 
 export default function SignupPage() {
@@ -16,14 +16,6 @@ export default function SignupPage() {
         password: "",
         confirmPassword: "",
     });
-    const [selectedRole, setSelectedRole] = useState<"employee" | "hr" | "admin" | "user">("employee");
-
-    const roles = [
-        { id: "employee", label: "Employee", icon: Briefcase, description: "Looking for jobs" },
-        { id: "hr", label: "HR", icon: Users, description: "Hiring talent" },
-        { id: "admin", label: "Admin", icon: Shield, description: "Platform admin" },
-        { id: "user", label: "User", icon: User, description: "General user" },
-    ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,8 +23,8 @@ export default function SignupPage() {
 
     const handleSignup = (e: React.FormEvent) => {
         e.preventDefault();
-        // Redirect to appropriate dashboard based on role
-        router.push(`/dashboard/${selectedRole}`);
+        // Redirect to user dashboard (role assigned by management)
+        router.push("/dashboard/user");
     };
 
     return (
@@ -47,27 +39,6 @@ export default function SignupPage() {
 
                 <h1 className={styles.title}>Create Account</h1>
                 <p className={styles.subtitle}>Join PushGo and start your journey</p>
-
-                {/* Role Selection */}
-                <div className={styles.roleSection}>
-                    <label className={styles.roleLabel}>I am a...</label>
-                    <div className={styles.roleGrid}>
-                        {roles.map((role) => {
-                            const Icon = role.icon;
-                            return (
-                                <button
-                                    key={role.id}
-                                    type="button"
-                                    className={`${styles.roleCard} ${selectedRole === role.id ? styles.roleCardActive : ""}`}
-                                    onClick={() => setSelectedRole(role.id as any)}
-                                >
-                                    <Icon size={20} />
-                                    <span className={styles.roleCardLabel}>{role.label}</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
 
                 {/* Signup Form */}
                 <form onSubmit={handleSignup} className={styles.form}>
