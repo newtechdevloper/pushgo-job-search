@@ -32,7 +32,7 @@ export default function JobCategories() {
                     {categories.map((cat, i) => {
                         const slug = cat.name.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-");
                         return (
-                            <Link href={`/jobs/${slug}`} key={i} style={{ textDecoration: 'none' }}>
+                            <Link href={`/jobs/category/${slug}`} key={i} style={{ textDecoration: 'none' }}>
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     whileInView={{ opacity: 1, scale: 1 }}
